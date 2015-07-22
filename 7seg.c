@@ -9,6 +9,11 @@
 #define GPIO_7 7
 #define GPIO_8 8
 #define GPIO_9 9
+#define GPIO_10 10
+#define GPIO_11 11
+#define GPIO_12 12
+#define GPIO_13 13
+
 
 #define LED_0	0
 #define LED_1	1
@@ -16,22 +21,37 @@
 #define LED_3	3
 #define LED_NUM 4
 
+#define INTERVAL 1000
+#define CYCLE 1
+
+
 #define DEBUG_PRINT 0
 
 int initialize(void);
 int finalize(void);
-int decode(int num, int *led);
+int decode(int num, int digit, int *led);
 
 int main(void)
 {
-	int i = 0;
+	int i,n,m = 0;
 	int led[LED_NUM] = {0};
 
 	if(initialize() == 1) return 1;
 
 	for(i = 0; i <= 9; i++){
-		decode(i, led);
-		delay(1000);
+		m = 0;
+		while(m <= INTERVAL / CYCLE){
+			decode(i, n, led);
+			delay(CYCLE);
+			if(n == 3)
+			{
+				n = 0;
+			}else{
+				n++;
+			}
+			m++;
+		}
+//		delay(INTERVAL);
 		if(i == 9){
 			i = 0;
 		}
@@ -56,6 +76,10 @@ int initialize(void)
 		pinMode(GPIO_7, OUTPUT);
 		pinMode(GPIO_8, OUTPUT);
 		pinMode(GPIO_9, OUTPUT);
+		pinMode(GPIO_10, OUTPUT);
+		pinMode(GPIO_11, OUTPUT);
+		pinMode(GPIO_12, OUTPUT);
+		pinMode(GPIO_13, OUTPUT);
 	}
 	return 0;
 }
@@ -70,11 +94,53 @@ int finalize(void)
     digitalWrite(GPIO_7, LOW);
     digitalWrite(GPIO_8, LOW);
     digitalWrite(GPIO_9, LOW);
+    digitalWrite(GPIO_10, LOW);
+    digitalWrite(GPIO_11, LOW);
+    digitalWrite(GPIO_12, LOW);
+    digitalWrite(GPIO_13, LOW);
 	return 0;
 }
 
-int decode(int num, int *led)
+int decode(int num, int digit, int *led)
 {
+
+	switch(digit){
+		case 0:
+			digitalWrite(GPIO_10, LOW);
+			digitalWrite(GPIO_11, HIGH);
+			digitalWrite(GPIO_12, HIGH);
+			digitalWrite(GPIO_13, HIGH);
+			break;
+
+		case 1:
+			digitalWrite(GPIO_10, HIGH);
+			digitalWrite(GPIO_11, LOW);
+			digitalWrite(GPIO_12, HIGH);
+			digitalWrite(GPIO_13, HIGH);
+			break;
+
+		case 2:
+			digitalWrite(GPIO_10, HIGH);
+			digitalWrite(GPIO_11, HIGH);
+			digitalWrite(GPIO_12, LOW);
+			digitalWrite(GPIO_13, HIGH);
+			break;
+
+		case 3:
+			digitalWrite(GPIO_10, HIGH);
+			digitalWrite(GPIO_11, HIGH);
+			digitalWrite(GPIO_12, HIGH);
+			digitalWrite(GPIO_13, LOW);
+			break;
+
+		default:
+			digitalWrite(GPIO_10, LOW);
+			digitalWrite(GPIO_11, LOW);
+			digitalWrite(GPIO_12, LOW);
+			digitalWrite(GPIO_13, LOW);
+			break;
+	}
+
 	switch(num){
 		case 0:
 			digitalWrite(GPIO_2, HIGH);
